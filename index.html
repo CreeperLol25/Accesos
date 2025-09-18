@@ -189,5 +189,296 @@
           <li draggable="true">
             <div class="menu-header">
               <button onclick="toggleMenu('chatbots')">Chatbots</button>
-              <button class="edit" onclick="editItem('chatbots')">
-                
+              <button class="edit" onclick="editItem('chatbots')">✏️</button>
+              <button class="add" onclick="addToCategory('chatbots')">➕</button>
+            </div>
+            <ul class="submenu" id="chatbots" style="display: none;">
+              <li draggable="true"><a href="https://beta.character.ai/" target="_blank">Character AI</a></li>
+              <li draggable="true"><a href="https://polybuzz.ai/" target="_blank">Polybuzz</a></li>
+              <li draggable="true"><a href="https://spicychat.ai/my-chatbots" target="_blank">Spicychat</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <button class="add-main" onclick="addNewCategory()">➕</button>
+  </div>
+
+  <script>
+    // Initialize app when DOM is fully loaded
+    function initApp() {
+      console.log('App inicializada en GitHub Pages'); // Debug: Verifica si el JS carga
+      try {
+        loadMenu();
+        document.querySelectorAll('.menu, .submenu').forEach(addDragListeners);
+        console.log('Eventos de arrastre y menú cargados'); // Debug
+      } catch (e) {
+        console.error('Error al inicializar app:', e); // Debug: Captura errores
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
+
+    let dragged = null;
+
+    function toggleMenu(id) {
+      console.log('Toggle menu:', id); // Debug
+      const submenu = document.getElementById(id);
+      if (submenu) {
+        submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+      } else {
+        console.error('Submenu no encontrado:', id); // Debug
+      }
+    }
+
+    function editItem(id) {
+      console.log('Editando categoría:', id); // Debug
+      const submenu = document.getElementById(id);
+      const titleBtn = submenu.parentNode.querySelector('.menu-header > button:first-child');
+      const newName = prompt('Nuevo nombre para la categoría:', titleBtn.textContent);
+      if (newName) titleBtn.textContent = newName;
+      const links = submenu.querySelectorAll('a');
+      links.forEach(link => {
+        const newUrl = prompt(`Nueva URL para "${link.textContent}" (actual: ${link.href})`, link.href);
+        if (newUrl) link.href = newUrl;
+      });
+      saveMenu();
+    }
+
+    function generateId() {
+      return 'id_' + Math.random().toString(36).substring(2, 9);
+    }
+
+    function addToCategory(id) {
+      console.log('Añadiendo a categoría:', id); // Debug
+      const choice = prompt('¿Qué deseas añadir?\n1. Enlace\n2. Subcategoría');
+      const targetUl = document.getElementById(id);
+      if (choice === '1') {
+        const name = prompt('Nombre del enlace:');
+        const url = prompt('URL del enlace:');
+        if (name && url) {
+          const li = document.createElement('li');
+          li.draggable = true;
+          const a = document.createElement('a');
+          a.href = url;
+          a.target = '_blank';
+          a.textContent = name;
+          li.appendChild(a);
+          targetUl.appendChild(li);
+          saveMenu();
+        }
+      } else if (choice === '2') {
+        const name = prompt('Nombre de la subcategoría:');
+        if (name) {
+          const newId = generateId();
+          const li = document.createElement('li');
+          li.draggable = true;
+          const div = document.createElement('div');
+          div.className = 'menu-header';
+          const btn = document.createElement('button');
+          btn.textContent = name;
+          btn.onclick = () => toggleMenu(newId);
+          div.appendChild(btn);
+          const editBtn = document.createElement('button');
+          editBtn.className = 'edit';
+          editBtn.textContent = '✏️';
+          editBtn.onclick = () => editItem(newId);
+          div.appendChild(editBtn);
+          const addBtn = document.createElement('button');
+          addBtn.className = 'add';
+          addBtn.textContent = '➕';
+          addBtn.onclick = () => addToCategory(newId);
+          div.appendChild(addBtn);
+          li.appendChild(div);
+          const subUl = document.createElement('ul');
+          subUl.className = 'submenu';
+          subUl.id = newId;
+          subUl.style.display = 'none';
+          li.appendChild(subUl);
+          addDragListeners(subUl);
+          targetUl.appendChild(li);
+          saveMenu();
+        }
+      }
+    }
+
+    function addNewCategory() {
+      console.log('Añadiendo nueva categoría'); // Debug
+      const name = prompt('Nombre de la nueva categoría:');
+      if (name) {
+        const newId = generateId();
+        const li = document.createElement('li');
+        li.draggable = true;
+        const div = document.createElement('div');
+        div.className = 'menu-header';
+        const btn = document.createElement('button');
+        btn.textContent = name;
+        btn.onclick = () => toggleMenu(newId);
+        div.appendChild(btn);
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit';
+        editBtn.textContent = '✏️';
+        editBtn.onclick = () => editItem(newId);
+        div.appendChild(editBtn);
+        const addBtn = document.createElement('button');
+        addBtn.className = 'add';
+        addBtn.textContent = '➕';
+        addBtn.onclick = () => addToCategory(newId);
+        div.appendChild(addBtn);
+        li.appendChild(div);
+        const subUl = document.createElement('ul');
+        subUl.className = 'submenu';
+        subUl.id = newId;
+        subUl.style.display = 'none';
+        li.appendChild(subUl);
+        addDragListeners(subUl);
+        document.getElementById('menu').appendChild(li);
+        saveMenu();
+      }
+    }
+
+    function addDragListeners(list) {
+      if (list.dataset.dragInitialized) return;
+      list.dataset.dragInitialized = 'true';
+      list.addEventListener('dragstart', e => {
+        if (e.target.tagName === 'LI') {
+          console.log('Iniciando arrastre:', e.target); // Debug
+          dragged = e.target;
+          e.target.classList.add('dragging');
+          e.dataTransfer.setData('text/plain', ''); // Para Firefox
+        }
+      });
+      list.addEventListener('dragend', e => {
+        if (e.target.tagName === 'LI') {
+          console.log('Fin de arrastre:', e.target); // Debug
+          e.target.classList.remove('dragging');
+          dragged = null;
+          saveMenu();
+        }
+      });
+      list.addEventListener('dragover', e => {
+        e.preventDefault();
+        if (!dragged || dragged.tagName !== 'LI') {
+          console.warn('Arrastre inválido, dragged no es LI'); // Debug
+          return;
+        }
+        const afterElement = getDragAfterElement(list, e.clientY);
+        if (afterElement == null) {
+          list.appendChild(dragged);
+        } else {
+          list.insertBefore(dragged, afterElement);
+        }
+      });
+      list.addEventListener('click', e => {
+        if (e.target.tagName === 'BUTTON') {
+          console.log('Click en botón:', e.target.textContent); // Debug
+          e.stopPropagation();
+        }
+      });
+    }
+
+    function getDragAfterElement(container, y) {
+      const draggableElements = [...container.querySelectorAll(':scope > li[draggable="true"]:not(.dragging)')];
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        }
+        return closest;
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function serializeList(ul) {
+      const items = [];
+      ul.querySelectorAll(':scope > li[draggable="true"]').forEach(li => {
+        const a = li.querySelector(':scope > a');
+        if (a) {
+          items.push({ type: 'link', name: a.textContent, url: a.href });
+        } else {
+          const header = li.querySelector('.menu-header');
+          const toggleBtn = header.querySelector('button:first-child');
+          const name = toggleBtn.textContent;
+          const onclick = toggleBtn.getAttribute('onclick');
+          const idMatch = onclick ? onclick.match(/'(.*)'/) : null;
+          const id = idMatch ? idMatch[1] : generateId();
+          const subUl = li.querySelector('ul.submenu');
+          const children = serializeList(subUl);
+          items.push({ type: 'category', name, id, children });
+        }
+      });
+      return items;
+    }
+
+    function saveMenu() {
+      console.log('Guardando menú en localStorage'); // Debug
+      const menu = document.getElementById('menu');
+      const data = serializeList(menu);
+      localStorage.setItem('menuData', JSON.stringify(data));
+    }
+
+    function buildList(ul, items) {
+      console.log('Construyendo lista:', items); // Debug
+      items.forEach(item => {
+        const li = document.createElement('li');
+        li.draggable = true;
+        if (item.type === 'link') {
+          const a = document.createElement('a');
+          a.href = item.url;
+          a.target = '_blank';
+          a.textContent = item.name;
+          li.appendChild(a);
+        } else {
+          const div = document.createElement('div');
+          div.className = 'menu-header';
+          const btn = document.createElement('button');
+          btn.textContent = item.name;
+          btn.onclick = () => toggleMenu(item.id);
+          div.appendChild(btn);
+          const editBtn = document.createElement('button');
+          editBtn.className = 'edit';
+          editBtn.textContent = '✏️';
+          editBtn.onclick = () => editItem(item.id);
+          div.appendChild(editBtn);
+          const addBtn = document.createElement('button');
+          addBtn.className = 'add';
+          addBtn.textContent = '➕';
+          addBtn.onclick = () => addToCategory(item.id);
+          div.appendChild(addBtn);
+          li.appendChild(div);
+          const subUl = document.createElement('ul');
+          subUl.className = 'submenu';
+          subUl.id = item.id;
+          subUl.style.display = 'none';
+          li.appendChild(subUl);
+          addDragListeners(subUl);
+          buildList(subUl, item.children);
+        }
+        ul.appendChild(li);
+      });
+    }
+
+    function loadMenu() {
+      console.log('Cargando menú desde localStorage'); // Debug
+      const storedData = localStorage.getItem('menuData');
+      if (storedData) {
+        try {
+          const data = JSON.parse(storedData);
+          const menu = document.getElementById('menu');
+          menu.innerHTML = '';
+          buildList(menu, data);
+          console.log('Menú cargado correctamente'); // Debug
+        } catch (e) {
+          console.error('Error al cargar datos del menú:', e); // Debug
+        }
+      } else {
+        console.log('No hay datos en localStorage, usando menú por defecto'); // Debug
+      }
+    }
+  </script>
+</body>
+</html>
