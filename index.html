@@ -111,7 +111,7 @@
         </div>
         <ul class="submenu" id="youtube" style="display: none;">
           <li draggable="true"><a href="https://www.youtube.com" target="_blank">Página principal</a></li>
-          <li draggable="true"><a href="https://www.youtube.com/channel/tu_canal" target="_blank">Mi canal</a></li>
+          <li draggable="true"><a href="https://www.youtube.com/channel/@CreeperLol" target="_blank">Mi canal</a></li>
           <li draggable="true"><a href="https://www.youtube.com/feed/subscriptions" target="_blank">Suscripciones</a></li>
         </ul>
       </li>
@@ -125,7 +125,7 @@
         </div>
         <ul class="submenu" id="twitter" style="display: none;">
           <li draggable="true"><a href="https://twitter.com/home" target="_blank">Página principal</a></li>
-          <li draggable="true"><a href="https://twitter.com/tu_usuario" target="_blank">Mi cuenta</a></li>
+          <li draggable="true"><a href="https://x.com/CreeperLoles" target="_blank">Mi cuenta</a></li>
           <li draggable="true"><a href="https://twitter.com/messages" target="_blank">Mensajes directos</a></li>
           <li draggable="true"><a href="https://twitter.com/notifications" target="_blank">Notificaciones</a></li>
         </ul>
@@ -141,7 +141,7 @@
         <ul class="submenu" id="twitch" style="display: none;">
           <li draggable="true"><a href="https://www.twitch.tv/" target="_blank">Página principal</a></li>
           <li draggable="true"><a href="https://www.twitch.tv/auronplay" target="_blank">Canal de AuronPlay</a></li>
-          <li draggable="true"><a href="https://www.twitch.tv/tu_canal" target="_blank">Mi canal</a></li>
+          <li draggable="true"><a href="https://www.twitch.tv/creeperloles" target="_blank">Mi canal</a></li>
         </ul>
       </li>
 
@@ -183,253 +183,10 @@
         </div>
         <ul class="submenu" id="ia" style="display: none;">
           <li draggable="true"><a href="https://chat.openai.com/" target="_blank">ChatGPT</a></li>
-          <li draggable="true"><a href="https://www.x.ai/grok" target="_blank">Grok</a></li>
+          <li draggable="true"><a href="https://grok.com/" target="_blank">Grok</a></li>
           <li draggable="true"><a href="https://gemini.google.com/" target="_blank">Gemini</a></li>
-          <li draggable="true"><a href="https://github.com/features/copilot" target="_blank">Copilot</a></li>
+          <li draggable="true"><a href="https://www.copilot.com/" target="_blank">Copilot</a></li>
           <li draggable="true">
             <div class="menu-header">
               <button onclick="toggleMenu('chatbots')">Chatbots</button>
-              <button class="edit" onclick="editItem('chatbots')">✏️</button>
-              <button class="add" onclick="addToCategory('chatbots')">➕</button>
-            </div>
-            <ul class="submenu" id="chatbots" style="display: none;">
-              <li draggable="true"><a href="https://beta.character.ai/" target="_blank">Character AI</a></li>
-              <li draggable="true"><a href="https://polybuzz.ai/" target="_blank">Polybuzz</a></li>
-              <li draggable="true"><a href="https://spicichat.com/" target="_blank">SpiciChat</a></li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-
-    </ul>
-    <button class="add-main" onclick="addNewCategory()">➕</button>
-  </div>
-
-  <script>
-    let dragged;
-
-    function toggleMenu(id) {
-      const submenu = document.getElementById(id);
-      submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function editItem(id) {
-      const titleBtn = document.querySelector(`#${id}`).parentNode.querySelector('.menu-header > button:first-child');
-      const newName = prompt('Nuevo nombre para la categoría:', titleBtn.textContent);
-      if (newName) titleBtn.textContent = newName;
-      const links = document.querySelectorAll(`#${id} a`);
-      links.forEach(link => {
-        const newUrl = prompt(`Nueva URL para "${link.textContent}" (actual: ${link.href})`, link.href);
-        if (newUrl) link.href = newUrl;
-      });
-      saveMenu();
-    }
-
-    function generateId() {
-      return 'id_' + Math.random().toString(36).substring(2, 9);
-    }
-
-    function addToCategory(id) {
-      const choice = prompt('Qué deseas añadir?\n1. Enlace\n2. Subcategoría');
-      const targetUl = document.getElementById(id);
-      if (choice === '1') {
-        const name = prompt('Nombre del enlace:');
-        const url = prompt('URL del enlace:');
-        if (name && url) {
-          const li = document.createElement('li');
-          li.draggable = true;
-          const a = document.createElement('a');
-          a.href = url;
-          a.target = '_blank';
-          a.textContent = name;
-          li.appendChild(a);
-          targetUl.appendChild(li);
-          saveMenu();
-        }
-      } else if (choice === '2') {
-        const name = prompt('Nombre de la subcategoría:');
-        if (name) {
-          const newId = generateId();
-          const li = document.createElement('li');
-          li.draggable = true;
-          const div = document.createElement('div');
-          div.className = 'menu-header';
-          const btn = document.createElement('button');
-          btn.textContent = name;
-          btn.onclick = () => toggleMenu(newId);
-          div.appendChild(btn);
-          const editBtn = document.createElement('button');
-          editBtn.className = 'edit';
-          editBtn.textContent = '✏️';
-          editBtn.onclick = () => editItem(newId);
-          div.appendChild(editBtn);
-          const addBtn = document.createElement('button');
-          addBtn.className = 'add';
-          addBtn.textContent = '➕';
-          addBtn.onclick = () => addToCategory(newId);
-          div.appendChild(addBtn);
-          li.appendChild(div);
-          const subUl = document.createElement('ul');
-          subUl.className = 'submenu';
-          subUl.id = newId;
-          subUl.style.display = 'none';
-          li.appendChild(subUl);
-          addDragListeners(subUl);
-          targetUl.appendChild(li);
-          saveMenu();
-        }
-      }
-    }
-
-    function addNewCategory() {
-      const name = prompt('Nombre de la nueva categoría:');
-      if (name) {
-        const newId = generateId();
-        const li = document.createElement('li');
-        li.draggable = true;
-        const div = document.createElement('div');
-        div.className = 'menu-header';
-        const btn = document.createElement('button');
-        btn.textContent = name;
-        btn.onclick = () => toggleMenu(newId);
-        div.appendChild(btn);
-        const editBtn = document.createElement('button');
-        editBtn.className = 'edit';
-        editBtn.textContent = '✏️';
-        editBtn.onclick = () => editItem(newId);
-        div.appendChild(editBtn);
-        const addBtn = document.createElement('button');
-        addBtn.className = 'add';
-        addBtn.textContent = '➕';
-        addBtn.onclick = () => addToCategory(newId);
-        div.appendChild(addBtn);
-        li.appendChild(div);
-        const subUl = document.createElement('ul');
-        subUl.className = 'submenu';
-        subUl.id = newId;
-        subUl.style.display = 'none';
-        li.appendChild(subUl);
-        addDragListeners(subUl);
-        document.getElementById('menu').appendChild(li);
-        saveMenu();
-      }
-    }
-
-    function addDragListeners(list) {
-      if (list.dataset.dragInitialized) return;
-      list.dataset.dragInitialized = 'true';
-      list.addEventListener('dragstart', e => {
-        dragged = e.target;
-        e.target.classList.add('dragging');
-      });
-      list.addEventListener('dragend', e => {
-        e.target.classList.remove('dragging');
-        saveMenu();
-      });
-      list.addEventListener('dragover', e => {
-        e.preventDefault();
-        const afterElement = getDragAfterElement(list, e.clientY);
-        if (afterElement == null) {
-          list.appendChild(dragged);
-        } else {
-          list.insertBefore(dragged, afterElement);
-        }
-      });
-    }
-
-    function getDragAfterElement(container, y) {
-      const draggableElements = [...container.querySelectorAll(':scope > li[draggable="true"]:not(.dragging)')];
-      return draggableElements.reduce((closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
-        if (offset < 0 && offset > closest.offset) {
-          return { offset: offset, element: child };
-        } else {
-          return closest;
-        }
-      }, { offset: Number.NEGATIVE_INFINITY }).element;
-    }
-
-    function serializeList(ul) {
-      const items = [];
-      ul.querySelectorAll(':scope > li[draggable="true"]').forEach(li => {
-        const a = li.querySelector(':scope > a');
-        if (a) {
-          items.push({ type: 'link', name: a.textContent, url: a.href });
-        } else {
-          const header = li.querySelector('.menu-header');
-          const toggleBtn = header.querySelector('button:first-child');
-          const name = toggleBtn.textContent;
-          const onclick = toggleBtn.getAttribute('onclick');
-          const idMatch = onclick ? onclick.match(/'(.*)'/) : null;
-          const id = idMatch ? idMatch[1] : null;
-          const subUl = li.querySelector('ul.submenu');
-          const children = serializeList(subUl);
-          items.push({ type: 'category', name, id, children });
-        }
-      });
-      return items;
-    }
-
-    function saveMenu() {
-      const menu = document.getElementById('menu');
-      const data = serializeList(menu);
-      localStorage.setItem('menuData', JSON.stringify(data));
-    }
-
-    function buildList(ul, items) {
-      items.forEach(item => {
-        const li = document.createElement('li');
-        li.draggable = true;
-        if (item.type === 'link') {
-          const a = document.createElement('a');
-          a.href = item.url;
-          a.target = '_blank';
-          a.textContent = item.name;
-          li.appendChild(a);
-        } else {
-          const div = document.createElement('div');
-          div.className = 'menu-header';
-          const btn = document.createElement('button');
-          btn.textContent = item.name;
-          btn.onclick = () => toggleMenu(item.id);
-          div.appendChild(btn);
-          const editBtn = document.createElement('button');
-          editBtn.className = 'edit';
-          editBtn.textContent = '✏️';
-          editBtn.onclick = () => editItem(item.id);
-          div.appendChild(editBtn);
-          const addBtn = document.createElement('button');
-          addBtn.className = 'add';
-          addBtn.textContent = '➕';
-          addBtn.onclick = () => addToCategory(item.id);
-          div.appendChild(addBtn);
-          li.appendChild(div);
-          const subUl = document.createElement('ul');
-          subUl.className = 'submenu';
-          subUl.id = item.id;
-          subUl.style.display = 'none';
-          li.appendChild(subUl);
-          addDragListeners(subUl);
-          buildList(subUl, item.children);
-        }
-        ul.appendChild(li);
-      });
-    }
-
-    function loadMenu() {
-      const storedData = localStorage.getItem('menuData');
-      if (storedData) {
-        const data = JSON.parse(storedData);
-        const menu = document.getElementById('menu');
-        menu.innerHTML = '';
-        buildList(menu, data);
-      }
-    }
-
-    // Inicializar
-    loadMenu();
-    document.querySelectorAll('.menu, .submenu').forEach(addDragListeners);
-  </script>
-</body>
-</html>
+              <button class="edit" onclick="editItem('chatbots')">
